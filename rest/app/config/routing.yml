@@ -1,7 +1,7 @@
 samples_demo:
     resource: "@SamplesDemoBundle/Controller/"
     type:     annotation
-    prefix:   /
+    prefix:   /samples
 
 rest_demo:
     resource: "@RestDemoBundle/Controller/"
