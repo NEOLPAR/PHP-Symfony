@@ -1,3 +1,8 @@
+samples_demo:
+    resource: "@SamplesDemoBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 rest_demo:
     resource: "@RestDemoBundle/Controller/"
     type:     annotation
