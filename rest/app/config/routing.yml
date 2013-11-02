@@ -1,0 +1,8 @@
+rest_demo:
+    resource: "@RestDemoBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+users:
+    type:     rest
+    resource: Rest\DemoBundle\Controller\UsersController
