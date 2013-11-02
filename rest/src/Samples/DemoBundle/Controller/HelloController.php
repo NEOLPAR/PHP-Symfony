@@ -8,14 +8,17 @@
 
 namespace Samples\DemoBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
-
-class HelloController {
+class HelloController extends Controller {
 
     public function indexAction ( $name )
     {
-        return new Response('Hello'.$name.'!');
+        //draw a template
+        return $this->render(
+            'SamplesDemoBundle:Hello:index.html.twig',
+            array( 'name' => $name )
+        );
     }
 
 } 
