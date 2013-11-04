@@ -1,1 +1,7 @@
-Hello {{ name }}!
+{# Extend base.html.twig, the template is drawn in this file.#}
+{% extends '::base.html.twig' %}
+
+{# the block into the body. #}
+{%  block body %}
+    Hello {{ name }}!
+{% endblock %}

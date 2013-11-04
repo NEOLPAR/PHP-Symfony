@@ -12,6 +12,12 @@ users:
     type:     rest
     resource: Rest\DemoBundle\Controller\UsersController
 
+<<<<<<< HEAD
 products:
     type:     rest
     resource: Rest\DemoBundle\Controller\ProductsController
+=======
+hello_world:
+    resource: "@RestDemoBundle/Resources/config/routing.yml"
+    prefix:   /hello
+>>>>>>> f31cebbce5f72be9f3fabbb27ca097006045b53a
