@@ -1,3 +1,0 @@
-hello:
-    path:     /{name}
-    defaults: { _controller: RestDemoBundle:Hello:index }

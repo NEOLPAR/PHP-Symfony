@@ -1,0 +1,6 @@
+Rest\DemoBundle\Model\Product:
+    getters:
+        name:
+            - NotBlank:
+        price:
+            - NotBlank:

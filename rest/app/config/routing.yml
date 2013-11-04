@@ -1,7 +1,7 @@
 samples_demo:
     resource: "@SamplesDemoBundle/Controller/"
     type:     annotation
-    prefix:   /
+    prefix:   /samples
 
 rest_demo:
     resource: "@RestDemoBundle/Controller/"
@@ -12,6 +12,6 @@ users:
     type:     rest
     resource: Rest\DemoBundle\Controller\UsersController
 
-hello_world:
-    resource: "@RestDemoBundle/Resources/config/routing.yml"
-    prefix:   /hello
+products:
+    type:     rest
+    resource: Rest\DemoBundle\Controller\ProductsController
