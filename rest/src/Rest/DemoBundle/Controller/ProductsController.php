@@ -8,16 +8,15 @@
 
 namespace Rest\DemoBundle\Controller;
 
-
-use JMS\Serializer\Serializer;
-use JMS\Serializer\SerializerBuilder;
-use Rest\DemoBundle\Entity\Product;
-use Rest\DemoBundle\Form\ProductType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Util\Codes;
+use JMS\Serializer\SerializationContext;
+use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use FOS\RestBundle\Controller\FOSRestController;
-use Symfony\Component\HttpFoundation\Response;
+
+use Rest\DemoBundle\Entity\Product;
+use Rest\DemoBundle\Form\ProductType;
 
 class ProductsController extends FOSRestController {
 
@@ -50,9 +49,50 @@ class ProductsController extends FOSRestController {
         return $this->processForm( new Product() );
     }
 
+    /**
+     * @param Product $product
+     * @return Product
+     * @View
+     * @ParamConverter("product", class="RestDemoBundle:Product")
+     *
+     */
+    public function putProductAction( Product $product )
+    {
+        return $this->processForm( $product );
+    }
+
+    /**
+     * @param Product $product
+     * @return Response
+     * @View
+     * @ParamConverter("product", class="RestDemoBundle:Product")
+     *
+     */
+    public function deleteProductAction( Product $product )
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove( $product );
+        $em->flush();
+
+        return new Response( 'Deleted', Codes::HTTP_OK );
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     * @View
+     * @ParamConverter("product", class="RestDemoBundle:Product")
+     *
+     */
     private function processForm ( Product $product )
     {
-        $statusCode = 400;
+        $exist = false;
+
+        if( !$product->getId() ) {
+            $statusCode = Codes::HTTP_CREATED;
+        } else {
+            $statusCode = Codes::HTTP_OK;
+        }
 
         $form = $this->createForm( new ProductType(), $product );
         $form->bind( $this->getRequest() );
@@ -60,28 +100,36 @@ class ProductsController extends FOSRestController {
         if ( $form->isValid() ) {
             $em = $this->getDoctrine()->getManager();
 
-            $exist = $em->getRepository('RestDemoBundle:Product')->findOneBy(array('name'=>$product->getName()));
-            if(!$exist) {
-                $statusCode = 201;
+            if( $statusCode === Codes::HTTP_CREATED ) {
+                $exist = $em->getRepository('RestDemoBundle:Product')->
+                    findOneBy( array(
+                            'name' => $product->getName(),
+                            'price' => $product->getPrice(),
+                            'description' => $product->getDescription()
+                            )
+                    );
+            }
+
+            if ( !$exist ) {
                 $em->persist( $product );
                 $em->flush();
             } else {
-                $statusCode = 200;
+                $product = $exist;
+                $statusCode = Codes::HTTP_OK;
             }
 
-            $response = new Response();
-            $response->setStatusCode( $statusCode );
-            $data = "";
+            $context = new SerializationContext();
+            $context->setSerializeNull( true );
 
-            if( 201 === $statusCode ) {
-                $serializer = $this->container->get( 'serializer' );
-                $data = json_encode( array( 'data' => $serializer->serialize( $product, 'json' ) ) );
-            }
+            $serializer = $this->get( 'jms_serializer' );
 
-            return $response->setContent( $response.$data );
+            $response = new Response( $serializer->serialize( $product, 'json', $context ) );
+            $response->headers->set( 'Content-Type', 'application/json' );
+
+            return $response;
         }
 
-        return View::create( $form, $statusCode );
+        return new Response( $form, Codes::HTTP_BAD_REQUEST );
     }
 
 } 
