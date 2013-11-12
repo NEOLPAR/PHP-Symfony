@@ -27,13 +27,7 @@ new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
 );
 ```
 
-2) Creating User entity with doctrine
--------------------------------------
-``` bash
-app/console doctrine:generate:entity
-```
-
-3) Configuring listeners
+2) Configuring listeners
 ------------------------
 app/config/config.yml
 
@@ -47,6 +41,12 @@ fos_rest:
         default_format: json
     view:
         view_response_listener: true
+```
+
+3) Creating User entity with doctrine
+-------------------------------------
+``` bash
+app/console doctrine:generate:entity
 ```
 
 4) UsersController and Route
