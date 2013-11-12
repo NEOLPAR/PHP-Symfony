@@ -22,8 +22,8 @@ app/AppKernel.php
 ``` php
 $bundles = array(
 .... ,
-new FOS\RestBundle\FOSRestBundle(),
-new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
+    new JMS\SerializerBundle\JMSSerializerBundle(),
+    new FOS\RestBundle\FOSRestBundle(),
 );
 ```
 
@@ -48,7 +48,7 @@ fos_rest:
 First need a new Bundle, we can generate with this wizard
 
 ```bash
-php app/console generate:bundle
+app/console generate:bundle
 ```
 
 Next step is to create a entity. We work over this entity.
