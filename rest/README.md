@@ -1,5 +1,5 @@
-Symfony Standard Edition
-========================
+Symfony REST service
+====================
 This directory contain a sample of method GET with REST service.
 
 1) Installing and configurating Symfony2 for REST
