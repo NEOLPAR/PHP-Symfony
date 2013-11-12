@@ -43,11 +43,8 @@ sensio_framework_extra:
     router: { annotations: true  }
 
 fos_rest:
-    format_listener:
-              rules:
-                 - { path: '^/', priorities: ['html','json', 'xml'], fallback_format: json, prefer_extension: false }
-                 - { path: '^/image', priorities: ['jpeg', 'gif'], fallback_format: jpeg, prefer_extension: false }
-                 - { path: '^/', priorities: ['*/*'], fallback_format: html, prefer_extension: false }
+    routing_loader:
+        default_format: json
     view:
         view_response_listener: true
 ```
@@ -270,6 +267,7 @@ You should change 'www-data' with the user name from point 2.
 -----------------------------------------
 We can hide the password on request from our methods with serializer bundle.
 All we have to do is create a file on our project directory:
+
 Rest\DemoBundle\Resources\config\serializer\Entity.User.yml
 
 ```yml
@@ -285,3 +283,68 @@ Rest\DemoBundle\Entity\User:
 ```
 
 We'll exclude all the fields and the wanted fields put expose to true
+
+9) Create a Product 
+-------------------
+I repeat previus steps to create other rest entity called Product wich have 'id, name, price and description' fields. We keep making the next things with this entity.
+
+First you have to generate a form automatically using the command line tool:
+
+```bash
+app/console generate:doctrine:form RestDemoBundle:Product
+```
+
+This give us a form type of product, we change the CSRF protection to false, because doesn't make much sense for a REST API.
+Rest / DemoBundle / Form / ProductType.php
+
+```php
+<?php
+
+namespace Rest\DemoBundle\Form;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+class ProductType extends AbstractType
+{
+        /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('name')
+            ->add('price')
+            ->add('description')
+        ;
+    }
+    
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'Rest\DemoBundle\Entity\Product',
+            //CSRF_PROTECTION in REST context doesn't make sense.
+            'csrf_protection' => false,
+        ));
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'product';
+    }
+}
+```
+
+10) Before POST method
+----------------------
+Create a processForm method to help us in the future.
+
+Rest / DemoBundle / 
