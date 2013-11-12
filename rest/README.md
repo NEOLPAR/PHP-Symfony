@@ -347,4 +347,135 @@ class ProductType extends AbstractType
 ----------------------
 Create a processForm method to help us in the future.
 
-Rest / DemoBundle / 
+Rest / DemoBundle / Controller / ProductsController.php
+
+```php
+    /**
+     * @param Product $product
+     * @return response
+     * @View
+     * @ParamConverter("product", class="RestDemoBundle:Product")
+     *
+     */
+    private function processForm ( Product $product )
+    {
+        $exist = false;
+
+        if( !$product->getId() ) {
+            $statusCode = Codes::HTTP_CREATED;
+        } else {
+            $statusCode = Codes::HTTP_OK;
+        }
+
+        $form = $this->createForm( new ProductType(), $product );
+        $form->bind( $this->getRequest() );
+
+        if ( $form->isValid() ) {
+            $em = $this->getDoctrine()->getManager();
+
+            if( $statusCode === Codes::HTTP_CREATED ) {
+                $exist = $em->getRepository('RestDemoBundle:Product')->
+                    findOneBy( array(
+                            'name' => $product->getName(),
+                            'price' => $product->getPrice(),
+                            'description' => $product->getDescription()
+                            )
+                    );
+            }
+
+            if ( !$exist ) {
+                $em->persist( $product );
+                $em->flush();
+            } else {
+                $product = $exist;
+                $statusCode = Codes::HTTP_OK;
+            }
+
+            $context = new SerializationContext();
+            $context->setSerializeNull( true );
+
+            $serializer = $this->get( 'jms_serializer' );
+
+            $response = new Response( $serializer->serialize( $product, 'json', $context ), $statusCode );
+            $response->headers->set( 'Content-Type', 'application/json' );
+
+            return $response;
+        }
+
+        return new Response( $form, Codes::HTTP_BAD_REQUEST );
+    }
+
+} 
+```
+
+11) Validation for Product POST
+-------------------------------
+If we want validate data, we can create a file like this for example.
+
+Rest / DemoBundle / Resources / config / validation.yml
+
+```yml
+Rest\DemoBundle\Model\Product:
+    getters:
+        name:
+            - NotBlank:
+        price:
+            - NotBlank:
+```
+
+12) POST, PUT and DELETE Methods
+--------------------------------
+We are now ready to create this methods, this is easy thanks to create a formProcess function.
+
+1) POST
+```php
+    public function postProductAction()
+    {
+        return $this->processForm( new Product() );
+    }
+```
+
+2) PUT
+```php
+    /**
+     * @param Product $product
+     * @return Product
+     * @View
+     * @ParamConverter("product", class="RestDemoBundle:Product")
+     *
+     */
+    public function putProductAction( Product $product )
+    {
+        return $this->processForm( $product );
+    }
+```
+
+3) DELETE
+```php
+    /**
+     * @param Product $product
+     * @return Response
+     * @View
+     * @ParamConverter("product", class="RestDemoBundle:Product")
+     *
+     */
+    public function deleteProductAction( Product $product )
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove( $product );
+        $em->flush();
+
+        return new Response( 'Deleted', Codes::HTTP_OK );
+    }
+```
+
+13) OPTIONS Methods
+-------------------
+If we have problems because OPTIONS method response 405 Method not allowed, we can create this method and return a void response to solve this.
+
+```php
+    public function optionsProductAction( Product $product )
+    {
+        return new Response('Ok', codes::HTTP_NO_CONTENT);
+    }
+```

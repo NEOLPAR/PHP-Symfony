@@ -51,7 +51,7 @@ class ProductsController extends FOSRestController {
 
     public function optionsProductAction( Product $product )
     {
-        return new Response('Ok', 204);
+        return new Response('Ok', codes::HTTP_NO_CONTENT);
     }
 
     /**
@@ -84,7 +84,7 @@ class ProductsController extends FOSRestController {
 
     /**
      * @param Product $product
-     * @return array
+     * @return response
      * @View
      * @ParamConverter("product", class="RestDemoBundle:Product")
      *
