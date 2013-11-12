@@ -1,10 +1,12 @@
 Symfony REST service
 ====================
-This directory contain a sample of REST service, GET, POST, PUT, DELETE and OPTIONS method.
 
-1) Installing and configurating Symfony2 for REST
--------------------------------------------------
-We'll install the symfony2 frmework with composer:
+This directory contains an example of a REST service with the GET, POST, PUT, DELETE and OPTIONS methods.
+
+1) Installing and configuring Symfony2 for REST
+-----------------------------------------------
+
+We'll install the Symfony2 framework with Composer:
 
 ``` bash
 composer create-project symfony/framework-standard-edition <FOLDER> 2.3.6
@@ -17,9 +19,10 @@ Installing dependencies for REST service, FOS REST and JMS Serializer:
 composer require jms/serializer-bundle @stable
 composer require friendsofsymfony/rest-bundle @stable
 ```
-app/AppKernel.php
 
 ``` php
+// app/AppKernel.php
+
 $bundles = array(
 .... ,
     new JMS\SerializerBundle\JMSSerializerBundle(),
@@ -29,9 +32,9 @@ $bundles = array(
 
 2) Configuring listeners
 ------------------------
-app/config/config.yml
 
 ``` yml
+# app/config/config.yml
 sensio_framework_extra:
     view:   { annotations: false }
     router: { annotations: true  }
@@ -45,13 +48,14 @@ fos_rest:
 
 3) Generating a New Bundle Skeleton and a new Entity
 ----------------------------------------------------
-First need a new Bundle, we can generate with this wizard
+
+First we need a new Bundle, which can be generated with this wizard:
 
 ```bash
 app/console generate:bundle
 ```
 
-Next step is to create a entity. We work over this entity.
+Next step is to create an entity. We work over this entity.
 
 ``` bash
 app/console doctrine:generate:entity
@@ -59,23 +63,23 @@ app/console doctrine:generate:entity
 
 4) UsersController and Route
 ----------------------------
+
 Routing to REST method:
 
-app/config/routing.yml
-
 ``` yml
+# app/config/routing.yml
 users:
     type:     rest
     resource: Rest\DemoBundle\Controller\UsersController
 ```
-REST URL for this route: http://localhost/rest/web/app_dev.php/users
 
-Create 2 methods getAll and get:
+REST URL for this route: `http://localhost/rest/web/app_dev.php/users`
 
-Rest\DemoBundle\Controller\UsersController.php
+Create `getAll()` and `get()` methods:
 
 ``` php
 <?php
+// Rest\DemoBundle\Controller\UsersController.php
 /**
  * Created by PhpStorm.
  * User: neolpar
@@ -84,7 +88,6 @@ Rest\DemoBundle\Controller\UsersController.php
  */
 
 namespace Rest\DemoBundle\Controller;
-
 
 use Rest\DemoBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -127,14 +130,15 @@ app/console route:debug
 
 5) Creating database and load data to try our GET methods
 ---------------------------------------------------------
-We install doctrine fixtures bundle and include on AppKernel.php
+
+We install doctrine fixtures bundle and include it on `AppKernel.php`
 
 ``` bash
 composer require doctrine/doctrine-fixtures-bundle dev-master
 ```
-app/AppKernel.php
 
 ```php
+// app/AppKernel.php
         $bundles = array(
             ..................... ,
             new JMS\SerializerBundle\JMSSerializerBundle(),
@@ -155,7 +159,6 @@ Create 'Rest\DemoBundle\DataFixtures\ORM\LoadUserData.php'
  */
 
 namespace Rest\DemoBundle\DataFixtures\ORM;
-
 
 use Doctrine\Common\DataFixtures\Doctrine;
 use Doctrine\Common\DataFixtures\FixtureInterface;
@@ -189,9 +192,8 @@ class LoadUserData implements FixtureInterface
 }
 ```
 
-app/config/parameters.yml
-
 ```yml
+# app/config/parameters.yml
 parameters:
     database_driver: pdo_mysql
     database_host: 127.0.0.1
@@ -212,7 +214,8 @@ app/console doctrine:fixtures:load
 
 6) Trying with HTTPIE
 ---------------------
-If you don't have installed, you can search it from https://github.com/jkbr/httpie
+
+If you don't have installed, you can search it from `https://github.com/jkbr/httpie`
 
 ```bash
 http http:\\localhost\rest\web\app_dev.php\users Accept:application/json
@@ -250,7 +253,8 @@ X-Powered-By: PHP/5.5.5
 
 7) Clearing cache
 -----------------
-Symfony2 work with cache. You could have any problem with permissions because the web server will work with an user and bash with other.
+
+Symfony2 works with cache. You could have some problems with permissions because the web server will work with a user and bash with other.
 
 0) Try the command 'app/console cache:clear' if you have any problem you can solve with the next steps.
 
@@ -261,7 +265,7 @@ rm -fr app/cache/*
 rm -fr app/logs/*
 ```
 
-2) Search the web server user on /etc/apache2/httpd.conf with the 'User' variable.
+2) Search the web server user on `/etc/apache2/httpd.conf` with the `User` directive.
 
 3) Change permissions of the directories with those commands:
 
@@ -269,16 +273,17 @@ rm -fr app/logs/*
 sudo chmod +a "www-data allow delete,write,append,file_inherit,directory_inherit" app/cache app/logs
 sudo chmod +a "`whoami` allow delete,write,append,file_inherit,directory_inherit" app/cache app/logs
 ```
-You should change 'www-data' with the user name from point 2.
+
+You should change `www-data` with the user name from step 2.
 
 8) Removing password from our GET request
 -----------------------------------------
+
 We can hide the password on request from our methods with serializer bundle.
 All we have to do is create a file on our project directory:
 
-Rest\DemoBundle\Resources\config\serializer\Entity.User.yml
-
 ```yml
+# Rest\DemoBundle\Resources\config\serializer\Entity.User.yml
 Rest\DemoBundle\Entity\User:
     exclusion_policy: ALL
     properties:
@@ -294,7 +299,8 @@ We'll exclude all the fields and the wanted fields put expose to true
 
 9) Create a Product 
 -------------------
-I repeat previus steps to create other rest entity called Product wich have 'id, name, price and description' fields. We keep making the next things with this entity.
+
+I repeat previous steps to create other rest entity called Product which have `id`, `name`, `price` and `description` fields. We keep making the next things with this entity.
 
 First you have to generate a form automatically using the command line tool:
 
@@ -303,10 +309,10 @@ app/console generate:doctrine:form RestDemoBundle:Product
 ```
 
 This give us a form type of product, we change the CSRF protection to false, because doesn't make much sense for a REST API.
-Rest / DemoBundle / Form / ProductType.php
 
 ```php
 <?php
+// Rest/DemoBundle/Form/ProductType.php
 
 namespace Rest\DemoBundle\Form;
 
@@ -316,7 +322,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ProductType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -353,11 +359,11 @@ class ProductType extends AbstractType
 
 10) Before POST method
 ----------------------
-Create a processForm method to help us in the future.
 
-Rest / DemoBundle / Controller / ProductsController.php
+Create a `processForm` method to help us in the future.
 
 ```php
+// Rest/DemoBundle/Controller/ProductsController.php
     /**
      * @param Product $product
      * @return response
@@ -418,11 +424,11 @@ Rest / DemoBundle / Controller / ProductsController.php
 
 11) Validation for Product POST
 -------------------------------
+
 If we want validate data, we can create a file like this for example.
 
-Rest / DemoBundle / Resources / config / validation.yml
-
 ```yml
+# Rest/DemoBundle/Resources/config/validation.yml
 Rest\DemoBundle\Model\Product:
     getters:
         name:
@@ -433,9 +439,10 @@ Rest\DemoBundle\Model\Product:
 
 12) POST, PUT and DELETE Methods
 --------------------------------
-We are now ready to create this methods, this is easy thanks to create a formProcess function.
+We are now ready to create this methods, this is easy thanks to create a `formProcess` function.
 
 1) POST
+
 ```php
     public function postProductAction()
     {
@@ -444,6 +451,7 @@ We are now ready to create this methods, this is easy thanks to create a formPro
 ```
 
 2) PUT
+
 ```php
     /**
      * @param Product $product
@@ -459,6 +467,7 @@ We are now ready to create this methods, this is easy thanks to create a formPro
 ```
 
 3) DELETE
+
 ```php
     /**
      * @param Product $product
@@ -479,7 +488,8 @@ We are now ready to create this methods, this is easy thanks to create a formPro
 
 13) OPTIONS Methods
 -------------------
-If we have problems because OPTIONS method response 405 Method not allowed, we can create this method and return a void response to solve this.
+
+If we have problems because `OPTIONS` method answers `405 Method not allowed`, we can create this method and return a void response to solve this.
 
 ```php
     public function optionsProductAction( Product $product )
