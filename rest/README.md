@@ -43,8 +43,16 @@ fos_rest:
         view_response_listener: true
 ```
 
-3) Creating User entity with doctrine
--------------------------------------
+3) Generating a New Bundle Skeleton and a new Entity
+----------------------------------------------------
+First need a new Bundle, we can generate with this wizard
+
+```bash
+php app/console generate:bundle
+```
+
+Next step is to create a entity. We work over this entity.
+
 ``` bash
 app/console doctrine:generate:entity
 ```
