@@ -49,6 +49,11 @@ class ProductsController extends FOSRestController {
         return $this->processForm( new Product() );
     }
 
+    public function optionsProductAction( Product $product )
+    {
+        return new Response('Ok', 204);
+    }
+
     /**
      * @param Product $product
      * @return Product
@@ -74,7 +79,7 @@ class ProductsController extends FOSRestController {
         $em->remove( $product );
         $em->flush();
 
-        return new Response( 'Deleted', Codes::HTTP_OK );
+        return new Response( 'Deleted', Codes::HTTP_NO_CONTENT );
     }
 
     /**
@@ -123,7 +128,7 @@ class ProductsController extends FOSRestController {
 
             $serializer = $this->get( 'jms_serializer' );
 
-            $response = new Response( $serializer->serialize( $product, 'json', $context ) );
+            $response = new Response( $serializer->serialize( $product, 'json', $context ), $statusCode );
             $response->headers->set( 'Content-Type', 'application/json' );
 
             return $response;
