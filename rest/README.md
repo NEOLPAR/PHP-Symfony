@@ -1,6 +1,6 @@
 Symfony REST service
 ====================
-This directory contain a sample of method GET with REST service.
+This directory contain a sample of REST service, GET, POST, PUT, DELETE and OPTIONS method.
 
 1) Installing and configurating Symfony2 for REST
 -------------------------------------------------
