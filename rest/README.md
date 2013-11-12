@@ -57,6 +57,22 @@ Next step is to create a entity. We work over this entity.
 app/console doctrine:generate:entity
 ```
 
+If you have a db you should follow this steps:
+
+1) Configure your DB in app/config/parameters.yml
+2) Generate metadata files. Metadata files describe the entity class to generate based on table fields.
+```bash
+app/console doctrine:mapping:import --force RestDemoBundle xml
+```
+You can change the xml to yml
+3) Now with doctrine will build related entity classes
+```bash
+app/console doctrine:mapping:convert annotation ./src
+app/console doctrine:generate:entities RestDemoBundle
+```
+If you want to use yml or xml mapping, you should execute the second command only.
+If you want to use annotations, you can remove the xml or yml files.
+
 4) UsersController and Route
 ----------------------------
 Routing to REST method:
